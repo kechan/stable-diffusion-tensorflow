@@ -18,9 +18,12 @@ def default_bpe():
     if os.path.exists(p):
         return p
     else:
+         # Use custom dir for cache if provided
+        cache_dir = os.getenv('KERAS_SD_HOME')   # if None, will just be default
         return keras.utils.get_file(
             "bpe_simple_vocab_16e6.txt.gz",
             "https://github.com/openai/CLIP/blob/main/clip/bpe_simple_vocab_16e6.txt.gz?raw=true",
+            cache_dir=cache_dir
         )
 
 

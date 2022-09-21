@@ -1,6 +1,6 @@
 import numpy as np
 from tqdm import tqdm
-import math
+import math, os
 
 import tensorflow as tf
 from tensorflow import keras
@@ -159,20 +159,27 @@ def get_models(img_height, img_width, download_weights=True):
     decoder = keras.models.Model(latent, decoder(latent))
     
     if download_weights:
+        # Use custom dir for cache if provided
+        cache_dir = os.getenv('KERAS_SD_HOME')   # if None, will just be default
+
         text_encoder_weights_fpath = keras.utils.get_file(
             origin="https://huggingface.co/fchollet/stable-diffusion/resolve/main/text_encoder.h5",
             file_hash="d7805118aeb156fc1d39e38a9a082b05501e2af8c8fbdc1753c9cb85212d6619",
+	    cache_dir=cache_dir
         )
         diffusion_model_weights_fpath = keras.utils.get_file(
             origin="https://huggingface.co/fchollet/stable-diffusion/resolve/main/diffusion_model.h5",
             file_hash="a5b2eea58365b18b40caee689a2e5d00f4c31dbcb4e1d58a9cf1071f55bbbd3a",
+	    cache_dir=cache_dir
         )
         decoder_weights_fpath = keras.utils.get_file(
             origin="https://huggingface.co/fchollet/stable-diffusion/resolve/main/decoder.h5",
             file_hash="6d3c5ba91d5cc2b134da881aaa157b2d2adc648e5625560e3ed199561d0e39d5",
+	    cache_dir=cache_dir
         )
 
         text_encoder.load_weights(text_encoder_weights_fpath)
         diffusion_model.load_weights(diffusion_model_weights_fpath)
         decoder.load_weights(decoder_weights_fpath)
+
     return text_encoder, diffusion_model, decoder
